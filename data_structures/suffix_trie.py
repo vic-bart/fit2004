@@ -83,6 +83,8 @@ class SuffixTrie():
 
         while len(group) > 0:
 
+          padding = None
+
           node = group.pop(0)
           children = node.get_children()
           if len(children) == 0:
@@ -115,14 +117,14 @@ class SuffixTrie():
               table[row-1].append(char)
             target = len(table[row-1]) - 2 - (len(children)-2)
 
-          print(f"targets: {targets}")
-
           if target > targets[0]:
             difference = target - targets[0]
             for i in range(row-2, -1, -1):
               padding = table[i][targets[0]-1]
               if padding == "|":
                 padding = "_"
+              if padding not in ["_", "|", " "]:
+                padding = " "
               for _ in range(difference):
                 table[i].insert(targets[0], padding)
             for i in range(len(targets)):
@@ -138,18 +140,6 @@ class SuffixTrie():
               new_targets[i] += difference
 
           targets.pop(0)
-
-      print(f"target: {target}")
-      print(f"new targets: {new_targets}")
-      string = ""
-      for i in range(len(table)):
-        if len(table[i]) == 0:
-          break
-        for j in range(len(table[i])):
-          string += table[i][j]
-        string += "\n"
-      print(string)
-      print("_______________________________________________")
 
       row += 2
       targets = new_targets
@@ -168,7 +158,6 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "AABBAABB"
-  # AABBCCBBABAB
+  string:str = "YESYYEESSYYYEEESSSDJWOUADWU"
   suffix_trie.insert(string)
   print(suffix_trie)
