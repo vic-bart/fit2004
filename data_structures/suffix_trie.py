@@ -83,8 +83,6 @@ class SuffixTrie():
 
         while len(group) > 0:
 
-          padding = None
-
           node = group.pop(0)
           children = node.get_children()
           if len(children) == 0:
@@ -121,7 +119,7 @@ class SuffixTrie():
             difference = target - targets[0]
             for i in range(row-2, -1, -1):
               padding = table[i][targets[0]-1]
-              if padding == "|":
+              if (padding == "|") or ((padding == " ") and (targets[0] < len(table[i])) and (table[i][targets[0]] == "_")):
                 padding = "_"
               if padding not in ["_", "|", " "]:
                 padding = " "
@@ -147,7 +145,7 @@ class SuffixTrie():
       if len(new_layer) > 0:
         queue.append(new_layer)
 
-    string = ""
+    string = (" " * (table[0].index("|")-1)) + "Root\n"
     for i in range(len(table)):
       if len(table[i]) == 0:
         break
@@ -158,6 +156,6 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "YESYYEESSYYYEEESSSDJWOUADWU"
+  string:str = "YTGHTGYHGTYHYGTHY"
   suffix_trie.insert(string)
   print(suffix_trie)
