@@ -9,6 +9,7 @@ class SuffixTrieNode():
   def __init__(self) -> None:
     self.character = None
     self.children = []
+    self.count = 0
 
   def set_character(self, character:str) -> None:
     self.character = character
@@ -27,17 +28,23 @@ class SuffixTrieNode():
         return child
     raise ValueError
   
-  def get_children(self) -> list[SuffixTrieNode]:
-    return self.children
-  
   def has_child(self, character:str) -> bool:
     for child in self.children:
       if child.get_character() == character:
         return True
     return False
-  
+
+  def get_children(self) -> list[SuffixTrieNode]:
+    return self.children
+
   def has_children(self) -> bool:
     return (len(self.children) > 0)
+
+  def set_count(self, count:int) -> None:
+    self.count = count
+
+  def get_count(self) -> int:
+    return self.count
 
 class SuffixTrie():
 
@@ -62,7 +69,29 @@ class SuffixTrie():
 
           node.set_child(self.string[j])
 
+        node.set_count(node.get_count() + 1)
         node = node.get_child(self.string[j])
+
+  def count(self, string:str) -> int:
+    """
+    """
+    node = self.root
+    child_found = False
+
+    for i in range(len(string)):
+      
+      for child in node.get_children():
+        
+        if string[i] == child.get_character():
+
+          node = child
+          child_found = True
+          break
+
+      if not child_found:
+        return 0
+      
+    return node.get_count()
 
   def __str__(self) -> str:
 
@@ -91,7 +120,7 @@ class SuffixTrie():
 
             continue
 
-          new_layer.append(children)
+          new_layer.append(children[:])
           newest_target = len(new_targets)
           
           for child in children:
@@ -200,6 +229,8 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "ABCDEAABBCCDDEEAAAABBBBDDDEEEEECCCCAABCDE"
+  string:str = "Hello World!"
   suffix_trie.insert(string)
   print(suffix_trie)
+  # index = suffix_trie.find("l")
+  print(suffix_trie.count("o"))
