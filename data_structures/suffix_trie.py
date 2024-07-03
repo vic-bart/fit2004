@@ -73,6 +73,7 @@ class SuffixTrie():
     queue = [[[self.root]]]
 
     while len(queue) > 0:
+
       layer = queue.pop(0)
       new_layer = []
       new_targets = []
@@ -85,56 +86,91 @@ class SuffixTrie():
 
           node = group.pop(0)
           children = node.get_children()
+
           if len(children) == 0:
+
             continue
+
           new_layer.append(children)
           newest_target = len(new_targets)
           
           for child in children:
+
             for char in list(" " + child.get_character()):
+
               table[row].append(char)
+
             if child.has_children():
+
               new_targets.append(len(table[row])-1)
 
           if len(children) == 1:
+
             for char in list(" |"):
+
               table[row-1].append(char)
+
             target = len(table[row-1])-1
 
           elif len(children) == 2:
+
             table[row].insert(-1, " ")
             table[row].insert(-1, " ")
+
             if children[-1].has_children():
+
               new_targets[-1] += 2
+
             for char in list("  _|_ "):
+
               table[row-1].append(char)
+
             target = len(table[row-1])-3
             
           else:
+
             for char in list("  " + "_" * (len(children)-2) + "|" + "_" * (len(children)-2) + " "):
+
               table[row-1].append(char)
+
             target = len(table[row-1]) - 2 - (len(children)-2)
 
           if target > targets[0]:
+
             difference = target - targets[0]
+
             for i in range(row-2, -1, -1):
+
               padding = table[i][targets[0]-1]
+
               if (padding == "|") or ((padding == " ") and (targets[0] < len(table[i])) and (table[i][targets[0]] == "_")):
+
                 padding = "_"
+
               if padding not in ["_", "|", " "]:
                 padding = " "
+
               for _ in range(difference):
+
                 table[i].insert(targets[0], padding)
+
             for i in range(len(targets)):
               targets[i] += difference
 
           if target < targets[0]:
+
             difference = targets[0] - target
+
             for i in range(row, row-2, -1):
+
               padding = table[i][-2]
+
               for _ in range(difference):
+
                 table[i].insert(-1, padding)
+
             for i in range(newest_target, len(new_targets)):
+
               new_targets[i] += difference
 
           targets.pop(0)
@@ -143,19 +179,27 @@ class SuffixTrie():
       targets = new_targets
 
       if len(new_layer) > 0:
+
         queue.append(new_layer)
 
     string = (" " * (table[0].index("|")-1)) + "Root\n"
+
     for i in range(len(table)):
+
       if len(table[i]) == 0:
+
         break
+
       for j in range(len(table[i])):
+
         string += table[i][j]
+
       string += "\n"
+
     return string
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "YTGHTGYHGTYHYGTHY"
+  string:str = "ABCDEAABBCCDDEEAAAABBBBDDDEEEEECCCCAABCDE"
   suffix_trie.insert(string)
   print(suffix_trie)
