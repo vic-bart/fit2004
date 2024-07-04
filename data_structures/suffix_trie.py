@@ -7,32 +7,26 @@ SuffixTrieNode = TypeVar("SuffixTrieNode")
 class SuffixTrieNode():
 
   def __init__(self) -> None:
-    self.character = None
+    self.index = None
     self.children = []
     self.count = 0
 
-  def set_character(self, character:str) -> None:
-    self.character = character
+  def set_index(self, index:int) -> None:
+    self.index = index
 
-  def get_character(self) -> str:
-    return self.character
+  def get_index(self) -> str:
+    return self.index
 
-  def set_child(self, character:str) -> None:
+  def set_child(self, index:int) -> None:
     node:SuffixTrieNode = SuffixTrieNode()
-    node.set_character(character)
+    node.set_index(index)
     self.children.append(node)
 
-  def get_child(self, character:str) -> SuffixTrieNode:
+  def get_child(self, string:str, index:int) -> SuffixTrieNode|None:
     for child in self.children:
-      if child.get_character() == character:
+      if string[child.get_index()] == string[index]:
         return child
-    raise ValueError
-  
-  def has_child(self, character:str) -> bool:
-    for child in self.children:
-      if child.get_character() == character:
-        return True
-    return False
+    return None
 
   def get_children(self) -> list[SuffixTrieNode]:
     return self.children
@@ -57,7 +51,6 @@ class SuffixTrie():
     """
     self.string = string + self.terminal_character
     self.root = SuffixTrieNode()
-    self.root.set_character("Root")
 
     for i in range(len(self.string)):
 
@@ -65,12 +58,12 @@ class SuffixTrie():
 
       for j in range(i, len(self.string)):
 
-        if not node.has_child(self.string[j]):
+        if node.get_child(self.string, j) is None:
 
-          node.set_child(self.string[j])
+          node.set_child(j)
 
         node.set_count(node.get_count() + 1)
-        node = node.get_child(self.string[j])
+        node = node.get_child(self.string, j)
 
   def count(self, string:str) -> int:
     """
@@ -82,7 +75,7 @@ class SuffixTrie():
       
       for child in node.get_children():
         
-        if string[i] == child.get_character():
+        if string[i] == string[child.get_index()]:
 
           node = child
           child_found = True
@@ -122,10 +115,11 @@ class SuffixTrie():
 
           new_layer.append(children[:])
           newest_target = len(new_targets)
+          boundary = len(table[row])
           
           for child in children:
 
-            for char in list(" " + child.get_character()):
+            for char in list(" " + self.string[child.get_index()]):
 
               table[row].append(char)
 
@@ -163,7 +157,7 @@ class SuffixTrie():
               table[row-1].append(char)
 
             target = len(table[row-1]) - 2 - (len(children)-2)
-
+            
           if target > targets[0]:
 
             difference = target - targets[0]
@@ -187,23 +181,23 @@ class SuffixTrie():
               targets[i] += difference
 
           if target < targets[0]:
-
+            
             difference = targets[0] - target
 
             for i in range(row, row-2, -1):
 
-              padding = table[i][-2]
+              padding = table[i][boundary]
 
               for _ in range(difference):
 
-                table[i].insert(-1, padding)
+                table[i].insert(boundary, padding)
 
             for i in range(newest_target, len(new_targets)):
 
               new_targets[i] += difference
-
+              
           targets.pop(0)
-
+          
       row += 2
       targets = new_targets
 
@@ -229,7 +223,7 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "Hello World!"
+  string:str = "ABCABCABC"
   suffix_trie.insert(string)
   print(suffix_trie)
   # index = suffix_trie.find("l")
