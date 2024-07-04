@@ -65,6 +65,27 @@ class SuffixTrie():
         node.set_count(node.get_count() + 1)
         node = node.get_child(self.string, j)
 
+  def find(self, string:str) -> int|None:
+    node = self.root
+    child_found = False
+    length = -1
+
+    for i in range(len(string)):
+      
+      for child in node.get_children():
+        
+        if string[i] == self.string[child.get_index()]:
+
+          node = child
+          child_found = True
+          length += 1
+          break
+
+      if not child_found:
+        return None
+  
+    return (node.get_index() - length)
+
   def count(self, string:str) -> int:
     """
     """
@@ -228,5 +249,6 @@ if __name__ == "__main__":
   string:str = "ABBDWADFAABBDABBWADSA"
   suffix_trie.insert(string)
   print(suffix_trie)
-  # index = suffix_trie.find("l")
+  i = suffix_trie.find("S")
+  print(i, string[i])
   print(suffix_trie.count("ABBD"))
