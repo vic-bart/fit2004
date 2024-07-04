@@ -75,7 +75,7 @@ class SuffixTrie():
       
       for child in node.get_children():
         
-        if string[i] == string[child.get_index()]:
+        if string[i] == self.string[child.get_index()]:
 
           node = child
           child_found = True
@@ -83,11 +83,13 @@ class SuffixTrie():
 
       if not child_found:
         return 0
-      
+  
     return node.get_count()
 
   def __str__(self) -> str:
-
+    """
+    Creates a string representation of a suffix trie.
+    """
     table = [[] for _ in range(len(self.string) * 2)]
     row = 1
     targets = [3]
@@ -191,11 +193,11 @@ class SuffixTrie():
               for _ in range(difference):
 
                 table[i].insert(boundary, padding)
-
+                
             for i in range(newest_target, len(new_targets)):
 
               new_targets[i] += difference
-              
+
           targets.pop(0)
           
       row += 2
@@ -223,8 +225,8 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "ABCABCABC"
+  string:str = "ABBDWADFAABBDABBWADSA"
   suffix_trie.insert(string)
   print(suffix_trie)
   # index = suffix_trie.find("l")
-  print(suffix_trie.count("o"))
+  print(suffix_trie.count("ABBD"))
