@@ -65,12 +65,16 @@ class SuffixTrie():
         node.set_count(node.get_count() + 1)
         node = node.get_child(self.string, j)
 
-  def find(self, string:str) -> int|None:
+  def find(self, string:str, start:int, end:int) -> int|None:
+    """
+    Returns the lowest index for a substring in a given inserted string within the range {start, ..., end - 1}.
+    """
     node = self.root
-    child_found = False
     length = -1
 
     for i in range(len(string)):
+
+      child_found = False
       
       for child in node.get_children():
         
@@ -88,12 +92,14 @@ class SuffixTrie():
 
   def count(self, string:str) -> int:
     """
+    Returns the number of occurences for a substring in a given inserted string. Note that overlapping words are included (e.g. "ABBABBA" will count "ABBA" twice).
     """
     node = self.root
-    child_found = False
 
     for i in range(len(string)):
       
+      child_found = False
+
       for child in node.get_children():
         
         if string[i] == self.string[child.get_index()]:
@@ -246,9 +252,9 @@ class SuffixTrie():
 
 if __name__ == "__main__":
   suffix_trie:SuffixTrie = SuffixTrie()
-  string:str = "ABBDWADFAABBDABBWADSA"
+  string:str = "ABBBBABBB"
   suffix_trie.insert(string)
   print(suffix_trie)
-  i = suffix_trie.find("S")
-  print(i, string[i])
-  print(suffix_trie.count("ABBD"))
+  # i = suffix_trie.find("S")
+  # print(i, string[i])
+  print(suffix_trie.count("ABBA"))
